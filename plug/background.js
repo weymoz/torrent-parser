@@ -1,4 +1,3 @@
-
 //Show / Hide extention button
 chrome.runtime.onInstalled.addListener(function installSetup() {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
@@ -12,15 +11,23 @@ chrome.runtime.onInstalled.addListener(function installSetup() {
 });
 
 
-chrome.downloads.onChanged.addListener(function(downloadInfo) {
+const getServerUrl = () => new Promise((resolve) => {
+  chrome.storage.sync.get("serverUrl", ({ serverUrl }) => {
+    resolve(serverUrl);
+  });
+});
+
+
+chrome.downloads.onChanged.addListener(async function(downloadInfo) {
 
   if(!downloadInfo.filename) {
     return;
   }
 
   const filePath = downloadInfo.filename.current
+  const serverUrl = await getServerUrl();
   
-  fetch("http://localhost:3000/", {
+  fetch(`${serverUrl}/save-path`, {
     method: "POST",
     body: JSON.stringify({filePath})
   });

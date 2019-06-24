@@ -1,19 +1,26 @@
 document.addEventListener("click", function(evt) {
-  console.log("click");
+
   //Check if disc icon was clicked
   const classes = evt.target.getAttribute('class');
-  if(!classes || !classes.includes('icon icon_disk')) {
+
+  if(!classes || !classes.includes('torrent_icons')) {
     return;
   }
 
   const containerNode = getContainerNode(evt.target);
+
+
   const title = extractTitle(containerNode);
 
   const tags = extractTags(containerNode);
 
-  fetch("http://localhost:3000/", {
-    method: "POST",
-    body: JSON.stringify({title, tags})
+
+
+  chrome.storage.sync.get('serverUrl', ({ serverUrl }) => {
+    fetch(`${serverUrl}/save-title-tags`, {
+      method: "POST",
+      body: JSON.stringify({title, tags})
+    });
   });
 });
 
@@ -23,6 +30,7 @@ document.addEventListener("click", function(evt) {
  */
 function getContainerNode(clickedNode) {
   let containerNode = clickedNode.parentNode;
+
 
   while(containerNode.nodeName !== "TD") {
     containerNode = containerNode.parentNode;
@@ -34,6 +42,7 @@ function getContainerNode(clickedNode) {
 function extractTitle(containerNode) {
   for (let element of containerNode.children) {
     if (element.nodeName === "A") {
+      console.log(element.innerText);
       return element.innerText;
     }
   }
@@ -43,11 +52,14 @@ function extractTitle(containerNode) {
 function extractTags(containerNode) {
   let tags;
   for(let element of containerNode.children) {
+
     if(element.nodeName === 'DIV' && element.getAttribute('class').includes('tags')) {
+    
       tags = [...element.children]
         .reduce((acc, val) => 
-          acc += `${val.firstChild.innerText.replace(".", " ")}, `, "");
+          acc += `${val.innerText.replace(".", " ")}, `, "");
       }
     }
+  console.log(tags);
   return tags.substring(0, tags.length - 2);
 }

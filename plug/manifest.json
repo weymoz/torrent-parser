@@ -23,5 +23,6 @@
     "declarativeContent", 
     "downloads",
     "http://*/"
-  ]
+  ],
+  "options_page": "options.html"
 }
