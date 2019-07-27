@@ -1,0 +1,46 @@
+.cars {
+  font-family: 'Lucida Sans', Verdana, Arial, sans-serif;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cars caption {
+  text-align: left;
+  font-style: italic;
+  border-bottom: 1px solid #ccc;
+}
+
+.cars tr:nth-child(even) {
+  background-color: #eee;
+}
+
+.cars caption,
+.cars tr,
+.cars td {
+  text-align: left;
+  padding: 0 .5em;
+  line-height: 2;
+}
+
+.cars thead {
+  border-bottom: 2px solid;
+}
+
+@media screen and (max-width: 760px) {
+  .cars {
+    display: block;
+  }
+
+  .cars thead {
+    display: none;
+  }
+  .cars tr {
+    border-bottom: 1px solid;
+  }
+
+  .cars td {
+    display: block;
+    float: left;
+    width: 100%;
+  }
+}

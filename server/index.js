@@ -2,15 +2,21 @@ const { SERVER_PORT, DROP_DATABASE } = require("./config");
 const logger = require("../logger")(module.filename);
 const { Torrent, connection } = require("./db");
 const express = require("express");
+const routes = require('./routes');
+const path = require('path');
 
 const app = express();
 
-app.get('/', (req, res) => {
-  res.send("Hello world");
-});
 
+//serve static files
+app.use(express.static(path.join(__dirname, 'public')));
 
+//View engine
+app.set('views', `${__dirname}/views`);
+app.set('view engine', 'pug');
 
+//Routing
+app.use('/', routes);
 
 app.listen(SERVER_PORT, 
   logger.info.bind(logger, 
