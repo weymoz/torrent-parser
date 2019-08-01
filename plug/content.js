@@ -1,4 +1,4 @@
-document.addEventListener("click", function(evt) {
+document.addEventListener("click", async function(evt) {
 
   //Check if disc icon was clicked
   const classes = evt.target.getAttribute('class');
@@ -8,26 +8,47 @@ document.addEventListener("click", function(evt) {
   }
 
   const containerNode = getContainerNode(evt.target);
-
-
   const title = extractTitle(containerNode);
-
   const tags = extractTags(containerNode);
+  const id = getId();
+  await saveId(id);
+  const serverUrl = await getServerUrl();
+  console.log(id);
 
-
-
-  chrome.storage.sync.get('serverUrl', ({ serverUrl }) => {
-    fetch(`${serverUrl}/save-title-tags`, {
-      method: "POST",
-      body: JSON.stringify({title, tags})
-    });
+  fetch(`${serverUrl}/save-title-tags`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({id1: id, title, tags})
   });
+
 });
 
 
-/**
- * Get container TD node from the clicked save torrent icon
- */
+
+function getId() {
+  return Math.floor(Date.now() * Math.random());
+}
+
+
+function saveId(id) {
+  return new Promise(function(resolve) {
+    chrome.storage.sync.set({id}, function() {
+      resolve(id); 
+    });
+  });
+}
+
+function getServerUrl() {
+  return new Promise(function(resolve) {
+    chrome.storage.sync.get('serverUrl', function({ serverUrl }) {
+      resolve(serverUrl);
+    });
+  });
+}
+
+
 function getContainerNode(clickedNode) {
   let containerNode = clickedNode.parentNode;
 
@@ -42,7 +63,6 @@ function getContainerNode(clickedNode) {
 function extractTitle(containerNode) {
   for (let element of containerNode.children) {
     if (element.nodeName === "A") {
-      console.log(element.innerText);
       return element.innerText;
     }
   }
@@ -54,12 +74,11 @@ function extractTags(containerNode) {
   for(let element of containerNode.children) {
 
     if(element.nodeName === 'DIV' && element.getAttribute('class').includes('tags')) {
-    
+
       tags = [...element.children]
         .reduce((acc, val) => 
           acc += `${val.innerText.replace(".", " ")}, `, "");
-      }
     }
-  console.log(tags);
+  }
   return tags.substring(0, tags.length - 2);
 }

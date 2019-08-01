@@ -1,0 +1,33 @@
+.torrents-table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 1200px;
+  font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+  text-align: center;
+
+  &__caption {
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    line-height: 2;
+    font-size: 1.5em;
+  }
+
+  &__header {
+    border-bottom: 3px solid #666;
+  }
+
+  &__column-name,
+  &__cell {
+    padding: 1em;
+    width: 25%;
+  }
+
+  &__cell {
+    border: 1px solid #666;
+    vertical-align: top;
+    font-size: .8em;
+    text-align: left;
+  }
+}

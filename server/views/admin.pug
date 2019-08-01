@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  table.torrents-table
+    caption.torrents-table__caption Saved Torrents
+    thead.torrents-table__header
+      tr
+        th.torrents-table__column-name Title
+        th.torrents-table__column-name Tags
+        th.torrents-table__column-name Torrent Path
+        th.torrents-table__column-name Files
+    tbody
+      each torrent in torrents
+        tr
+          td.torrents-table__cell= torrent.title
+          td.torrents-table__cell= torrent.tags
+          td.torrents-table__cell= torrent.filePath
+
+          if torrent.files.length > 1
+            td.torrents-table__cell
+              ul
+                each file in torrent.files
+                  li= file
+          else
+            td.torrents-table__cell= torrent.files
+
+
+

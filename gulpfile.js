@@ -39,52 +39,71 @@ function watchScripts(cb) {
 }
 
 function clean() {
-  return del(['public']);
+  return del([PUBLIC_FOLDER]);
 }
 
 function startBrowserSync(cb){
-  browserSync.init({
-        proxy: "http://localhost:3000",
-        files: ["public/**/*.*"],
+  browserSync.init(null, {
+    proxy: "http://localhost:3000",
         browser: "/usr/bin/google-chrome-stable",
         port: 7000,
-      
   }, cb);
 }
 
 function startNodemon(cb) {
-  nodemon({
+  let server = nodemon({
     script: './server/index.js',
-    watch: ['./server'],
+    watch: ['server'],
     ext: 'js pug',
+    stdout: false,
     done: cb
   });
+ 
+  server.on('stdout', (stdout) => {
+    process.stdout.write(stdout);
+
+    if(stdout === '[info:connection.js] connection OK') {
+      browserSync.reload();
+    }
+  });
+  cb();
 }
 
 function watchAndReload(cb) {
-  browserSync.init({
-        proxy: "http://localhost:3000",
-        files: ["public/**/*.*"],
+  let server = nodemon({
+    script: './server/index.js',
+    watch: ['server'],
+    ext: 'js pug',
+    stdout: false,
+  });
+
+  server.on('stdout', (stdout) => {
+    process.stdout.write(stdout);
+
+    if(stdout.includes("connection OK")) {
+      browserSync.reload();
+    }
+  });
+
+  server.on('stderr', stderr => process.stderr.write(stderr));
+
+
+  browserSync.init(null, {
+    proxy: "http://localhost:3000",
         browser: "/usr/bin/google-chrome-stable",
         port: 7000,
-      
-  }, cb);
+  });
 
-  nodemon({
-    script: './server/index.js',
-    watch: ['./server'],
-    ext: 'js pug',
-    done: cb
-  })
-    .on('start',() => setTimeout(browserSync.reload, 3000) );
+  cb();
 }
+
 
 
 exports.styles = styles;
 exports.scripts = scripts;
 exports.clean = clean;
 exports.nodemon = startNodemon;
-exports.dev = series(clean, styles, scripts, 
+exports.dev = series(clean, styles, scripts,
   parallel(watchStyles, watchScripts, watchAndReload));
 
 
