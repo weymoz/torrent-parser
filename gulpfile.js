@@ -5,10 +5,13 @@ const sass = require("gulp-sass");
 const babel = require('gulp-babel');
 const del = require("del");
 const nodemon = require("gulp-nodemon");
+const pug = require('gulp-pug');
 
 const PUBLIC_FOLDER = './server/public';
 const STYLES_FOLDER = './server/scss';
 const SCRIPTS_FOLDER = './server/js';
+const PLUGIN_FOLDER = './plug';
+const PLUGIN_VIEWS_FOLDER = './plug/views';
 
 sass.compiler = require("node-sass");
 
@@ -22,10 +25,59 @@ function styles() {
     .pipe(browserSync.reload({stream: true}));
 }
 
+
 function watchStyles(cb) {
   watch(STYLES_FOLDER, styles);
   cb();
 }
+
+
+function popupStyles() {
+  return src('plug/src/*.scss')
+    .pipe(sourcemaps.init())
+    .pipe(sass().on('error', sass.logError))
+    .pipe(sourcemaps.write())
+    .pipe(dest('plug'))
+    .pipe(browserSync.reload({stream: true}));
+}
+
+function watchPopupStyles(cb) {
+  watch('plug/src', popupStyles);
+  cb();
+}
+
+function popupPug() {
+  return src(PLUGIN_VIEWS_FOLDER + '/popup.pug')
+    .pipe(pug({pretty: true}))
+    .pipe(dest(PLUGIN_FOLDER));
+}
+
+function watchPopupPug(cb) {
+  watch(PLUGIN_VIEWS_FOLDER + '/*.pug', popupPug);
+  cb();
+}
+
+function reloadBrowser(cb) {
+  browserSync.reload();
+  cb();
+}
+
+function watchPopupHtml(cb) {
+  watch(PLUGIN_FOLDER + '/popup.html', reloadBrowser);
+    cb();
+}
+
+function popupDevServer() {
+    browserSync.init({
+      browser: "/usr/bin/google-chrome-stable",
+      server: {
+        baseDir: "plug",
+        index: 'popup.html'
+      }
+    });
+}
+
+exports.popup = series(popupPug, popupStyles, parallel(popupDevServer, watchPopupStyles, watchPopupPug, watchPopupHtml));
 
 function scripts() {
   return src('./server/js/*.js')
@@ -105,6 +157,7 @@ exports.clean = clean;
 exports.nodemon = startNodemon;
 exports.dev = series(clean, styles, scripts,
   parallel(watchStyles, watchScripts, watchAndReload));
+
 
 
 

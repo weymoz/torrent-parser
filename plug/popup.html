@@ -1,10 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title></title>
-</head>
-<body>
- <h1>Hello World</h1>
-</body>
+<html>
+  <head>
+    <title> | Torrent Parser Server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="torrents">
+      <div class="controls">
+        <a id="reset" class="controls__btn controls__btn_reset">Reset</a>
+        <a id="save" class="controls__btn controls__btn_save">Save</a>
+      </div>
+      <div id="torrents__list" class="torrents__list"></div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
 </html>

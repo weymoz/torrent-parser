@@ -1,0 +1,15 @@
+.torrents__list-item 
+
+  .torrents__number= index
+
+  .torrents__info 
+    .torrents__title= torrent 
+    .torrents__size-url 
+      | 575Mb
+      a.torrents__link(href="#")
+        svg(width="100%" height="100%")
+          use(xlink:href="img/icons.svg#link")
+
+  .torrents__delete-item 
+    svg.torrents__delete-item
+      use(xlink:href="img/icons.svg#close")

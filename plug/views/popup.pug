@@ -1,0 +1,7 @@
+extends layout
+block torrents__list
+
+  .torrents__list
+    each torrent, number in torrentsList
+      - var index = number + 1;
+      include torrents__list-item 

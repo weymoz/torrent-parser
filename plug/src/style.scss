@@ -1,0 +1,103 @@
+$primaryColor: #fff1c1;
+$secondaryColorDark: #252525;
+$secondaryColorLight: #414141;
+$accentColor: #5EDFFF;
+$warningColor: #f76262;
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 600px;
+}
+
+.torrents {
+  width: 100%;
+  background-color: $secondaryColorLight;
+  font-family: sans-serif;
+  font-size: .9em;
+  
+  &__list {
+    padding: 1em;
+    color: $primaryColor;
+  }
+
+  &__list-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid $secondaryColorDark;
+  }
+
+  &__info {
+    margin-right: auto;
+    margin-left: 1.5em;
+  }
+
+  &__size-url {
+    margin-top: .8em;
+    font-weight: bold;
+  }
+
+  &__delete-item {
+    color: $warningColor;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  &__link {
+    height: 12px;
+    width: 31px;
+    display: inline-block;
+    color: $accentColor; 
+    margin-left: .6em;
+  }
+}
+
+.controls {
+  width: 100%;
+  display: flex;
+  background-color: $secondaryColorDark;
+  padding: 15px;
+  box-sizing: border-box;
+
+
+  &__btn {
+    flex: 1;
+    border: 1px solid $primaryColor;
+    display: table-cell;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 10px;
+
+    &:first-child {
+      margin-right: 0px;
+    }
+
+    &_save {
+      background-color: $primaryColor;
+      color: $secondaryColorDark;
+    }
+
+    &_reset {
+      background-color: none;
+      color: $primaryColor;
+    }
+
+  }
+
+  &__btn_reset:hover {
+    background-color: rgba(255, 241, 193, .2);
+  }
+  &__btn_save:hover {
+    background-color: rgba(255, 241, 193, .9);
+  }
+}
+
+
+

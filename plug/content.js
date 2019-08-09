@@ -10,21 +10,16 @@ document.addEventListener("click", async function(evt) {
   const containerNode = getContainerNode(evt.target);
   const title = extractTitle(containerNode);
   const tags = extractTags(containerNode);
-  const id = getId();
-  await saveId(id);
-  const serverUrl = await getServerUrl();
-  console.log(id);
-
-  fetch(`${serverUrl}/save-title-tags`, {
-    method: "POST",
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({id1: id, title, tags})
-  });
-
+  const size = getTorrentSize(containerNode);
+  const url = getTorrentUrl(containerNode);
+  sendMessage({title, tags, size, url});
 });
 
+
+function sendMessage(message) {
+  chrome.runtime.sendMessage(message, function(response) {
+  });
+}
 
 
 function getId() {
@@ -40,6 +35,7 @@ function saveId(id) {
   });
 }
 
+
 function getServerUrl() {
   return new Promise(function(resolve) {
     chrome.storage.sync.get('serverUrl', function({ serverUrl }) {
@@ -51,7 +47,6 @@ function getServerUrl() {
 
 function getContainerNode(clickedNode) {
   let containerNode = clickedNode.parentNode;
-
 
   while(containerNode.nodeName !== "TD") {
     containerNode = containerNode.parentNode;
@@ -81,4 +76,23 @@ function extractTags(containerNode) {
     }
   }
   return tags.substring(0, tags.length - 2);
+}
+
+
+function getTorrentSize(containerNode) {
+  return containerNode
+    .nextElementSibling
+    .nextElementSibling
+    .nextElementSibling
+    .nextElementSibling
+    .innerText;
+}
+
+
+function getTorrentUrl(containerNode) {
+  for(element of containerNode.children) {
+    if(element.nodeName === 'A') {
+      return 'https://empornium.me' + element.getAttribute('href');
+    }
+  }
 }
