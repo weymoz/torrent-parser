@@ -5,24 +5,33 @@ block content
     caption.torrents-table__caption Saved Torrents
     thead.torrents-table__header
       tr
+        th.torrents-table__column-name.torrents-table__column-name_index #
         th.torrents-table__column-name Title
         th.torrents-table__column-name Tags
         th.torrents-table__column-name Torrent Path
         th.torrents-table__column-name Files
+        th.torrents-table__column-name.torrents-table__column-name_size Size
+        th.torrents-table__column-name URL
     tbody
-      each torrent in torrents
+      each torrent, index in torrents
         tr
+          td.torrents-table__cell= index + 1
           td.torrents-table__cell= torrent.title
           td.torrents-table__cell= torrent.tags
-          td.torrents-table__cell= torrent.filePath
+          td.torrents-table__cell.torrents-table__cell_hoverable
+            | #{torrent.filePath}
+            .tooltip= torrent.filePath
+            
 
           if torrent.files.length > 1
             td.torrents-table__cell
-              ul
+              ul.files-list
                 each file in torrent.files
-                  li= file
+                  li.files-list__item= file
           else
             td.torrents-table__cell= torrent.files
-
+          td.torrents-table__cell= torrent.size
+          td.torrents-table__cell
+            a(href= torrent.url)= torrent.url
 
 

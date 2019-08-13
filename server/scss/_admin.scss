@@ -6,6 +6,8 @@
   max-width: 1200px;
   font-family: "Lucida Grande", Verdana, Arial, sans-serif;
   text-align: center;
+  position: relative;
+  z-index: 100;
 
   &__caption {
     text-align: left;
@@ -24,10 +26,55 @@
     width: 25%;
   }
 
+  &__column-name {
+    &_index {
+      width: 3%;
+    }
+    &_size {
+      width: 10%;
+    }
+  }
+
   &__cell {
     border: 1px solid #666;
     vertical-align: top;
     font-size: .8em;
     text-align: left;
+    padding: .5em;
+    position: relative;
+    overflow: hidden;
+
+    &_hoverable:hover {
+      overflow: visible;
+      color: white;
+    }
+
+    &_hoverable:hover > .tooltip {
+      display: block;
+      color: black;
+      position: absolute;
+      z-index: 200;
+      background-color: pink;  
+      top: 0;
+      left: 0;
+      padding: .5em;
+    }
+
+  }
+
+}
+
+.files-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  
+  &__item {
+    margin-bottom: .8em;
   }
 }
+
+.tooltip {
+  display: none;
+}
+

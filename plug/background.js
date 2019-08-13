@@ -3,14 +3,14 @@ let messages = [];
 let filesCounter = 0;
 
 const getDataFromStorage = (keys) => new Promise((resolve) => {
-  chrome.storage.sync.get(keys, (data) => {
+  chrome.storage.local.get(keys, (data) => {
     resolve(data);
   });
 });
 
 
 const saveDataToStorage = (data) => new Promise((resolve) => {
-  chrome.storage.sync.set({data}, () => {
+  chrome.storage.local.set({data}, () => {
     resolve();
   });
 });

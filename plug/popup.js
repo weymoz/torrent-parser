@@ -1,34 +1,53 @@
 const getDataFromStorage = (keys) => new Promise((resolve) => {
-  chrome.storage.sync.get(keys, (data) => {
+  chrome.storage.local.get(keys, (data) => {
     resolve(data);
   });
 });
 
 
 const saveDataToStorage = (data) => new Promise((resolve) => {
-  chrome.storage.sync.set({data}, () => {
+  chrome.storage.local.set({data}, () => {
     resolve();
   });
 });
 
 
 const deleteDataFromStorage = (data) => new Promise((resolve) => {
-  chrome.storage.sync.remove(data, () => {
+  chrome.storage.local.remove(data, () => {
     resolve();
   });
 });
 
 
+function getTotalSize({data: torrents}) {
+  let totalSize = 0;
+
+  for(let torrent of torrents) {
+    let units = torrent.size.split(" ")[1];
+    let size = parseFloat(torrent.size.split(" ")[0]);
+
+    if(units === 'MiB') {
+      size = size / 1024;
+    }
+    totalSize += size;
+  }
+  return `${totalSize.toFixed(3)} Gb`;
+}
+
+
 const updateView = async () => {
   let view = document.getElementById('torrents__list');
+  let totalSize = document.getElementById('total-size');
   let torrents = await getDataFromStorage('data');
-  console.log(torrents);
+
+
   if(!torrents || !torrents.data || 
      !Array.isArray(torrents.data) || torrents.data.length === 0)  {
         view.innerHTML = "<h3>No torrents added yet ...</h3>";
         return;
   }
-
+  
+  totalSize.innerHTML = `Total size: <b>${getTotalSize(torrents)}</b>`;
 
   function listItemTag(strings, number, title, size, url, index) {
     return `
@@ -88,7 +107,27 @@ window.onload = async function() {
     await deleteDataFromStorage('data');
     updateView();
   });
-  
+
+  const save = document.getElementById('save');
+  save.addEventListener('click', async function() {
+    const status = document.getElementById('status');
+    status.innerText = 'Saving torrents ...';
+
+    const {data: torrents, serverUrl} = await getDataFromStorage(['data', 'serverUrl']);
+
+    console.log(torrents);
+    const response = await fetch(`${serverUrl}/save`, 
+      {
+        method: "POST",
+        body: JSON.stringify(torrents),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+    });
+
+    const responseText = await response.text()
+    status.innerText = `${responseText} torrents saved`;
+  }); 
 
   const observer = new MutationObserver(function(mutationList, observer) {
     let listItems = [...mutationList[0].addedNodes]

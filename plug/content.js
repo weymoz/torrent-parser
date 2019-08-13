@@ -29,7 +29,7 @@ function getId() {
 
 function saveId(id) {
   return new Promise(function(resolve) {
-    chrome.storage.sync.set({id}, function() {
+    chrome.storage.local.set({id}, function() {
       resolve(id); 
     });
   });
@@ -38,7 +38,7 @@ function saveId(id) {
 
 function getServerUrl() {
   return new Promise(function(resolve) {
-    chrome.storage.sync.get('serverUrl', function({ serverUrl }) {
+    chrome.storage.local.get('serverUrl', function({ serverUrl }) {
       resolve(serverUrl);
     });
   });

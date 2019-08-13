@@ -5,6 +5,16 @@ const express = require("express");
 const routes = require('./routes');
 const path = require('path');
 
+if (DROP_DATABASE && connection) {
+  connection.dropDatabase((error, result) => {
+    if(error) {
+      logger.error(error);
+      return;
+    }
+    logger.debug(`database dropped: ${result}`);
+  });
+}
+
 const app = express();
 
 app.use(express.json());

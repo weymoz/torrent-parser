@@ -35,6 +35,27 @@ body {
     color: #5EDFFF;
     margin-left: .6em; }
 
+    .info {
+      height: 3em;
+      border-bottom: 1px solid #252525;
+      color: #fff1c1;
+    }
+
+    .info:before {
+      content: '';
+      display: inline-block;
+      vertical-align: middle;
+      height: 100%;}
+
+    .info__total-size {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 3em;
+      font-size: 1em;
+    
+    }
+
+
 .controls {
   width: 100%;
   display: flex;

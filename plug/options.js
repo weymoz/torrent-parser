@@ -12,7 +12,7 @@ save.addEventListener("click", () => {
 
   document.getElementById("server-url").value = serverUrl;
 
-  chrome.storage.sync.set({serverUrl}, () => {
+  chrome.storage.local.set({serverUrl}, () => {
     status.textContent = "URL saved";
     setTimeout(() => status.textContent = "", 1000);
   });
@@ -20,7 +20,7 @@ save.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  chrome.storage.sync.get({serverUrl: DEFAULT_SERVER_URL}, 
+  chrome.storage.local.get({serverUrl: DEFAULT_SERVER_URL}, 
     ({ serverUrl }) => {
       document.getElementById("server-url").value = serverUrl;
     });
