@@ -80,13 +80,18 @@ function popupDevServer() {
 exports.popup = series(popupPug, popupStyles, parallel(popupDevServer, watchPopupStyles, watchPopupPug, watchPopupHtml));
 
 function scripts() {
-  return src('./server/js/*.js')
+  return src(SCRIPTS_FOLDER + '/*.js')
     .pipe(babel())
     .pipe(dest(PUBLIC_FOLDER));
 }
 
 function watchScripts(cb) {
-  watch(SCRIPTS_FOLDER, series(scripts, browserSync.reload));
+  watch(SCRIPTS_FOLDER + '/*.js', scripts);
+  cb();
+}
+
+function watchPublicFolder(cb) {
+  watch(PUBLIC_FOLDER, reloadBrowser);
   cb();
 }
 
@@ -156,7 +161,7 @@ exports.scripts = scripts;
 exports.clean = clean;
 exports.nodemon = startNodemon;
 exports.dev = series(clean, styles, scripts,
-  parallel(watchStyles, watchScripts, watchAndReload));
+  parallel(watchStyles, watchScripts, watchPublicFolder, watchAndReload));
 
 
 

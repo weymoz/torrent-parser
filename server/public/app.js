@@ -1,7 +1,17 @@
 "use strict";
 
-var greet = function greet() {
-  return console.log("Hello!");
+var DELETE_PATH = 'http://localhost:3000/delete-all';
+
+window.onload = function () {
+  var deleteAll = document.getElementById('delete-all');
+  deleteAll.addEventListener('click', deleteAllHandler);
 };
 
-greet();
+function deleteAllHandler() {
+  fetch(DELETE_PATH).then(function (response) {
+    console.log(response);
+    return response.text();
+  }).then(function (text) {
+    return console.log(text);
+  });
+}

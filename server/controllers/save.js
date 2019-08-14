@@ -4,6 +4,7 @@ const { Torrent } = require("../db");
 const logger = require("../../logger")(module.filename);
 
 module.exports = async function (req, res) {
+
   let torrents = req.body; 
   logger.info(`${torrents.length} torrents received`);
 
@@ -13,8 +14,6 @@ module.exports = async function (req, res) {
   torrents.forEach((torrent, index) => {
     torrent.files = files[index];
   });
-
-  console.log(torrents);
 
   Torrent.insertMany(torrents, function(err) {
     if(err) {
@@ -30,15 +29,25 @@ module.exports = async function (req, res) {
 }
 
 
+function torrentsExist(torrents) {
+  return torrents.reduce((acc, torrent) => (!!torrent) && acc , true);
+}
+
+
 function getTorrentFiles(torrent) {
   return new Promise((resolve, reject) => {
     fs.readFile(torrent.filePath, (err, torrentBuffer) => {
+
       if(err) {
-        reject();
+        resolve(["Torrent file does not exist!"]);
+        return;
       }
-      resolve(parseTorrent(torrentBuffer)
+
+      resolve(
+        parseTorrent(torrentBuffer)
         .files
         .map(file => file.path));
+
     });
   })
 }

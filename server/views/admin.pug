@@ -1,6 +1,8 @@
 extends layout
 
 block content
+  form(method="GET" action="/delete-all").controls
+    button(type="submit").delete-all#delete-all Delete All Torrents
   table.torrents-table
     caption.torrents-table__caption Saved Torrents
     thead.torrents-table__header

@@ -4,6 +4,7 @@ const { Torrent, connection } = require("./db");
 const express = require("express");
 const routes = require('./routes');
 const path = require('path');
+const cors = require('cors');
 
 if (DROP_DATABASE && connection) {
   connection.dropDatabase((error, result) => {
@@ -17,6 +18,7 @@ if (DROP_DATABASE && connection) {
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 //serve static files

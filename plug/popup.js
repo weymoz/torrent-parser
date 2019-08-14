@@ -21,8 +21,9 @@ const deleteDataFromStorage = (data) => new Promise((resolve) => {
 
 function getTotalSize({data: torrents}) {
   let totalSize = 0;
-
+    console.log(torrents);
   for(let torrent of torrents) {
+    console.log(torrent);
     let units = torrent.size.split(" ")[1];
     let size = parseFloat(torrent.size.split(" ")[0]);
 
@@ -134,6 +135,10 @@ window.onload = async function() {
       .filter(item => item.nodeType !== 3);
 
     let deleteButtons = listItems.map(item => item.children[2]);
+
+    if(!deleteButtons[0]) {
+      return;
+    }
 
     deleteButtons.forEach(button => button.addEventListener('click', async function(evt) {
       let index = parseInt(this.dataset.index);
