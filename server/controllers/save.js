@@ -6,6 +6,13 @@ const logger = require("../../logger")(module.filename);
 module.exports = async function (req, res) {
 
   let torrents = req.body; 
+
+  console.log(torrents);
+  if(!Array.isArray(torrents)) {
+    res.send("No torrents saved");
+    return;
+  }
+
   logger.info(`${torrents.length} torrents received`);
 
   const files = await Promise.all(

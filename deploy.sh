@@ -1,8 +1,6 @@
 tar czf parser.tar.gz \
   server \
   logger \
-  client \
-  parseTorrents \
   package.json \
   package-lock.json \
   config.js \
