@@ -2,4 +2,35 @@
   max-width: 1200px;
   margin: auto;
   padding: 1em 0;
+
+  & > .button {
+    margin-right: 1em;
+  }
 }
+
+
+.button {
+  text-decoration: none;
+  color: black;
+  display: inline-block;
+  padding: .8em;
+  background-color: #ccc;
+  border: 1px solid #ccc;
+  font-family: sans-serif;
+
+  &_dangerous {
+    background-color: indianred;
+    border: 1px solid indianred;
+    color: white;
+  }
+
+  &:active {
+    transform: translateY(3px);
+  }
+
+  &:hover {
+    border: 1px solid #666;
+  }
+}
+
+

@@ -1,9 +1,10 @@
 extends layout
 
 block content
-  form(method="GET" action="/delete-all").controls
-    button(type="submit").delete-all#delete-all Delete All Torrents
-    button(type="submit").copy-files#copy-files Copy files 
+  .controls
+    a.button.button_dangerous(href="/delete-all-torrents") Delete torrents
+    a.button.button_dangerous(href="/delete-all-downloads") Delete downloads
+    a.button.button_normal(href="/copy") Copy Downloads
   table.torrents-table
     caption.torrents-table__caption Saved Torrents
     thead.torrents-table__header

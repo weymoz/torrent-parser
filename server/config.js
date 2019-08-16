@@ -4,5 +4,6 @@ module.exports = {
   SERVER_PORT: process.env.SERVER_PORT || 3000,
   TORRENTS_PATH: process.env.TORRENTS_PATH 
   //|| "/home/alul/rtorrent/watch/bposter"
-  || "/home/mint/projects/parser/torrents"
+  || "/home/mint/projects/parser/torrents",
+  DOWNLOADS_PATH: process.env.DOWNLOADS_PATH || "/home/mint/projects/parser/downloads",
 };
