@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  .controls
+    a.button.button_normal(href="/admin") Admin
+  table.torrents-table
+    caption.torrents-table__caption Deleted Downloads 
+    thead.torrents-table__header
+      tr
+        th.torrents-table__column-name.torrents-table__column-name_index #
+        th.torrents-table__column-name File / Folder
+    tbody
+      each file, index in deletedFiles
+        tr
+          td.torrents-table__cell= index + 1
+          td.torrents-table__cell= file 
+
+
