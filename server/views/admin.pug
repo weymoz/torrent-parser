@@ -3,6 +3,7 @@ extends layout
 block content
   form(method="GET" action="/delete-all").controls
     button(type="submit").delete-all#delete-all Delete All Torrents
+    button(type="submit").copy-files#copy-files Copy files 
   table.torrents-table
     caption.torrents-table__caption Saved Torrents
     thead.torrents-table__header
@@ -24,14 +25,15 @@ block content
             | #{torrent.filePath}
             .tooltip= torrent.filePath
             
-
-          if torrent.files.length > 1
-            td.torrents-table__cell
-              ul.files-list
-                each file in torrent.files
-                  li.files-list__item= file
-          else
-            td.torrents-table__cell= torrent.files
+          td.torrents-table__cell.torrents-table__cell_hoverable
+            ul.files-list
+              each file in torrent.files
+                li.files-list__item= file
+            .tooltip
+                ul.files-list
+                  each file in torrent.files
+                    li.files-list__item= file
+              
           td.torrents-table__cell= torrent.size
           td.torrents-table__cell
             a(href= torrent.url)= torrent.url

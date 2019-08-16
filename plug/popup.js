@@ -21,7 +21,7 @@ const deleteDataFromStorage = (data) => new Promise((resolve) => {
 
 function getTotalSize({data: torrents}) {
   let totalSize = 0;
-    console.log(torrents);
+
   for(let torrent of torrents) {
     console.log(torrent);
     let units = torrent.size.split(" ")[1];
@@ -47,6 +47,8 @@ const updateView = async () => {
         view.innerHTML = "<h3>No torrents added yet ...</h3>";
         return;
   }
+
+  console.log("I'm here!");
   
   totalSize.innerHTML = `Total size: <b>${getTotalSize(torrents)}</b>`;
 
