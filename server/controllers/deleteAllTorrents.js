@@ -7,7 +7,7 @@ const del = require('del');
 module.exports = async (req, res) => {
   logger.info(`Deleting all torrents`);
 
-  const deletedFiles = await del([`${TORRENTS_PATH}/**/*`]);
+  const deletedFiles = await del([`${TORRENTS_PATH}/**/*`], {force: true});
   logger.info(`List of deleted files and dirs:\n${deletedFiles.join('\n')}`);
   // const torrents = await Torrent.find({});
   // torrents.forEach(torrent => {

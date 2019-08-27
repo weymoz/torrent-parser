@@ -23,7 +23,6 @@ function getTotalSize({data: torrents}) {
   let totalSize = 0;
 
   for(let torrent of torrents) {
-    console.log(torrent);
     let units = torrent.size.split(" ")[1];
     let size = parseFloat(torrent.size.split(" ")[0]);
 
@@ -48,8 +47,6 @@ const updateView = async () => {
         return;
   }
 
-  console.log("I'm here!");
-  
   totalSize.innerHTML = `Total size: <b>${getTotalSize(torrents)}</b>`;
 
   function listItemTag(strings, number, title, size, url, index) {

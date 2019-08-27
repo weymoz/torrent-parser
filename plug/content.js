@@ -12,6 +12,7 @@ document.addEventListener("click", async function(evt) {
   const tags = extractTags(containerNode);
   const size = getTorrentSize(containerNode);
   const url = getTorrentUrl(containerNode);
+  console.log({title, tags, size, url});
   sendMessage({title, tags, size, url});
 });
 

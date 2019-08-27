@@ -1,6 +1,7 @@
 tar czf parser.tar.gz \
   server \
   logger \
+  plug \
   package.json \
   package-lock.json \
   config.js \
