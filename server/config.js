@@ -3,17 +3,22 @@ module.exports = {
 
   DROP_DATABASE: process.env.DROP_DATABASE !== "false" && false,
 
+  CLEAN_VIDEOS_COLLECTON: process.env.CLEAN_VIDEOS_COLLECTON !== 
+    "false" && true,
+
   SERVER_PORT: process.env.SERVER_PORT || 3000,
 
   TORRENTS_PATH: process.env.TORRENTS_PATH 
-  //|| "/home/alul/rtorrent/watch/bposter"
-  || "/home/mint/hetz/home/alul/rtorrent/watch/bposter",
+  //|| "/home/mint/hetz/home/alul/rtorrent/watch/bposter",
+  || "/home/mint/projects/parser/torrents",
 
   DOWNLOADS_PATH: process.env.DOWNLOADS_PATH 
-  || "/home/mint/hetz/home/alul/rtorrent/download/bposter",
+  //|| "/home/mint/hetz/home/alul/rtorrent/download/bposter",
+  || "/home/mint/projects/parser/downloads",
 
   VIDEOS_PATH: process.env.VIDEOS_PATH 
-  || "/home/mint/hetz/home/alul/bposter/videos",
+  //|| "/home/mint/hetz/home/alul/bposter/videos",
+  || "/home/mint/projects/parser/videos",
 
   FILE_TYPES: [
     'jpg',

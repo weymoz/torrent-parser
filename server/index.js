@@ -1,20 +1,14 @@
-const { SERVER_PORT, DROP_DATABASE } = require("./config");
+const { SERVER_PORT } = require("./config");
+require('./db/connection');
+require('./db/models/torrent');
+require('./db/models/video');
 const logger = require("../logger")(module.filename);
-const { Torrent, connection } = require("./db");
-const express = require("express");
+const express = require('express');
 const routes = require('./routes');
 const path = require('path');
 const cors = require('cors');
 
-if (DROP_DATABASE && connection) {
-  connection.dropDatabase((error, result) => {
-    if(error) {
-      logger.error(error);
-      return;
-    }
-    logger.debug(`database dropped: ${result}`);
-  });
-}
+
 
 const app = express();
 

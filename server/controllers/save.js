@@ -2,7 +2,6 @@ const { TORRENTS_PATH } = require('../config');
 const fs = require("fs");
 const path = require("path");
 const parseTorrent = require("parse-torrent");
-const { Torrent } = require("../db");
 const logger = require("../../logger")(module.filename);
 
 module.exports = async function (req, res) {

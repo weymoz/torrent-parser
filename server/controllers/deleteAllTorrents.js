@@ -1,4 +1,3 @@
-const { Torrent } = require("../db");
 const logger = require('../../logger')(module.filename);
 const fs = require('fs');
 const { TORRENTS_PATH } = require('../config');

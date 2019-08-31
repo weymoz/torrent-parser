@@ -12,11 +12,13 @@ block content
         th.torrents-table__column-name.torrents-table__column-name_index #
         th.torrents-table__column-name Torrent id
         th.torrents-table__column-name File path
+        th.torrents-table__column-name Metadata
     tbody
       each file, index in copiedFiles
         tr
           td.torrents-table__cell= index + 1
           td.torrents-table__cell= file.torrentId 
           td.torrents-table__cell= file.path
+          td.torrents-table__cell= file.metadata
 
 

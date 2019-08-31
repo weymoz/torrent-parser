@@ -1,5 +1,5 @@
-const { Torrent, Video } = require("../db");
 const logger = require('../../logger')(module.filename);
+const ffmpeg = require('fluent-ffmpeg');
 
 const { 
   VIDEOS_PATH, 
@@ -7,47 +7,109 @@ const {
   FILE_TYPES,
   RENAME_FILE,
   NORMALIZE_FILENAME_PATTERNS,
+  CLEAN_VIDEOS_COLLECTON,
 } = require('../config');
 
 const fs = require('fs');
 const path = require('path');
+const { compose } = require('ramda');
 
-module.exports = (req, res) => {
+module.exports = async (req, res, next) => {
 
-  (async function() {
-    const deleteResult = await Video.deleteMany();
-    logger
-      .debug(`Deleted ${deleteResult.deletedCount} documents from video table`);
-  })();
+  if(CLEAN_VIDEOS_COLLECTON) {
+    const { deletedCount } = await Video.deleteMany({}).catch(next);
+    if(deletedCount === undefined) {
+      logger.error(`Error occured while deleting video documents from videos collection`);
+      return;
+    }
+    logger.info(`Deleted ${deletedCount} documents from Videos collection`);
+  }
 
-  logger.info('Start copying...');
+  let files = await Torrent.find({}, 'files')
+    .exec()
+    .catch(next);
 
-  Torrent.find({})
-    .select("files")
-    .exec((err, result) => {
+  if(!files) {
+    logger.error(`No torrent documents received from Torrents collection`);
+    return;
+  };
 
-      let files = flattenSearchResult(result);
-      files = filterByType(files);
-      copyFiles(files);
-      res.redirect(`/copied-files?filesCount=${files.length}`);
-    });
+  files = compose(filterByType, flattenSearchResult)(files);
+
+  copyFiles(files);
+
+  res.redirect(`/copied-files?filesCount=${files.length}`);
 }
 
 
 async function copyFiles(files) {
   files = await resolvePath(files);
-  files.forEach(file => {
-    copyFile(file, saveFileToDatabase);
-  });
+  files.forEach(processFile);
 } 
 
 
-function copyFile(file, cb) {
-  const {src, dest} = file;
-  const fileReadStream = fs.createReadStream(src);
-  const fileWriteStream = fs.createWriteStream(dest);
-  fileWriteStream.on('finish', cb.bind(null, file));
-  fileReadStream.pipe(fileWriteStream);
+async function processFile(file) {
+
+  //1
+  logger.info(`1) Starting to copy file ${file.dest}`);
+  file = await copyFile(file);
+  logger.info(`2) copied file ${file.dest}`);
+
+  //2
+  logger.info(`3) Starting to get metadata: ${file.dest}`);
+  const metadata = await getMetadata(file)
+    .catch(err => {
+      logger.error(`Error getting metadata: ${file.dest}`)
+    });
+  file = {...file, metadata};
+  logger.info(`4) Got metadata: ${file.dest}`);
+
+  //3
+  saveFileToDatabase(file);
+}
+
+
+
+function getMetadata(file) {
+  return new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(file.dest, (err, metadata) => {
+      if(err) {
+        reject(err);
+        return;
+      }
+      resolve(extractVideoData(metadata));
+    });
+  });
+}
+
+
+function extractVideoData(metadata) {
+  const { width, height } = metadata.streams.filter(stream => 
+    stream.codec_type === 'video')[0];
+  const { duration, size, bit_rate: bitrate } = metadata.format;
+
+  return {
+    duration,
+    size,
+    bitrate,
+    resolution: `${width}/${height}px`
+  };
+}
+
+
+function copyFile(file) {
+  return new Promise(function(resolve, reject) {
+    const {src, dest} = file;
+
+    const fileReadStream = fs.createReadStream(src);
+    fileReadStream.on('error', reject);
+
+    const fileWriteStream = fs.createWriteStream(dest);
+    fileWriteStream.on('finish', resolve.bind(null, file));
+    fileWriteStream.on('error', reject);
+
+    fileReadStream.pipe(fileWriteStream);
+  });
 }
 
 
@@ -132,24 +194,10 @@ function getTorrentTitleByID(id) {
 
 
 
-  /*
-function copyFile(file, cb) {
-    const {src, dest} = file;
-    fs.copyFile(src, dest, err => {
-      if(err) {
-        logger.error(`Error copying ${src}`);
-        logger.error(err);
-        logger.error(err.stack);
-        return;
-      }
-      logger.info(`Copied ${src} to ${dest}`);
-      cb(file)
-    });
-}
-*/
 function saveFileToDatabase(file) {
-    const {id, dest} = file;
-    const video = new Video({torrentId: id, path: dest}); 
+    const {id, dest, metadata} = file;
+    const video = new Video({torrentId: id, path: dest, 
+    metadata: new Metadata({...metadata})}); 
     const ERR_MSG = `Error saving file ${dest} to database`;
 
     video.save((err, result) => {
@@ -164,4 +212,7 @@ function saveFileToDatabase(file) {
 }
 
 
-
+function errorHandler(error) {
+  logger.error(error.message);
+  throw error;
+}

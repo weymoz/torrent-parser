@@ -1,4 +1,4 @@
-const { Torrent } = require("../db");
+const Torrent = require('mongoose').model('torrent');
 
 module.exports = async (req, res) => {
   let torrents = await Torrent.find({});

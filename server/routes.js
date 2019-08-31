@@ -1,15 +1,15 @@
 const express = require('express');
-const logger = require("../logger")(module.filename);
-
 const router = express.Router();
-const root = require('./controllers/root');
-const admin = require('./controllers/admin');
-const save = require('./controllers/save');
-const deleteAllTorrents = require('./controllers/deleteAllTorrents');
-const deleteAllDownloads = require('./controllers/deleteAllDownloads');
-const copy = require('./controllers/copy');
-const copiedFiles = require('./controllers/copiedFiles');
-const test = require('./controllers/test');
+const { 
+  admin,
+  save,
+  test,
+  deleteAllTorrents,
+  deleteAllDownloads,
+  copy,
+  copiedFiles,
+  root
+} = require('./controllers');
 
 router.get('/', root);
 router.get('/admin', admin);

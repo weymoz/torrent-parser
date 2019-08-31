@@ -1,4 +1,3 @@
-const { Torrent } = require("../db");
 const logger = require('../../logger')(module.filename);
 const fs = require('fs');
 const del = require('del');
