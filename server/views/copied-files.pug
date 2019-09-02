@@ -17,8 +17,17 @@ block content
       each file, index in copiedFiles
         tr
           td.torrents-table__cell= index + 1
-          td.torrents-table__cell= file.torrentId 
+            td.torrents-table__cell= file.torrentTitle 
           td.torrents-table__cell= file.path
-          td.torrents-table__cell= file.metadata
+          td.torrents-table__cell
+            b size: 
+            span= file.metadata.size
+            b  dur.: 
+            span= file.metadata.duration
+            b  res.: 
+            span= file.metadata.resolution
+            b  btrt.: 
+            span= file.metadata.bitrate
+
 
 

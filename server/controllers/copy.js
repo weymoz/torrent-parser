@@ -1,5 +1,12 @@
 const logger = require('../../logger')(module.filename);
 const ffmpeg = require('fluent-ffmpeg');
+const mongoose = require('mongoose');
+const { exec } = require('child_process');
+const fs = require('fs');
+
+const Torrent = mongoose.model('torrent');
+const Metadata = mongoose.model('metadata');
+const Video = mongoose.model('video');
 
 const { 
   VIDEOS_PATH, 
@@ -8,9 +15,10 @@ const {
   RENAME_FILE,
   NORMALIZE_FILENAME_PATTERNS,
   CLEAN_VIDEOS_COLLECTON,
+  CONTACT_SHEETS_PATH,
+  VENDOR_PATH,
 } = require('../config');
 
-const fs = require('fs');
 const path = require('path');
 const { compose } = require('ramda');
 
@@ -25,9 +33,7 @@ module.exports = async (req, res, next) => {
     logger.info(`Deleted ${deletedCount} documents from Videos collection`);
   }
 
-  let files = await Torrent.find({}, 'files')
-    .exec()
-    .catch(next);
+  let files = await Torrent.find({}, 'files').exec().catch(next);
 
   if(!files) {
     logger.error(`No torrent documents received from Torrents collection`);
@@ -36,7 +42,7 @@ module.exports = async (req, res, next) => {
 
   files = compose(filterByType, flattenSearchResult)(files);
 
-  copyFiles(files);
+  files = await copyFiles(files);
 
   res.redirect(`/copied-files?filesCount=${files.length}`);
 }
@@ -44,28 +50,82 @@ module.exports = async (req, res, next) => {
 
 async function copyFiles(files) {
   files = await resolvePath(files);
-  files.forEach(processFile);
+  files = files.filter(file => fs.existsSync(file.src));
+
+  files = files.map(file => {
+    return new Promise((resolve) => {
+      copyFile(file).then(file => {
+        logger.info(`Copied file: ${file.dest}`)
+      }).catch(err => logger.error(err));
+    });
+  })
+
+  return Promise.all(files);
 } 
 
 
-async function processFile(file) {
+//async function processFile(file) {
+//
+//  //0 Check if file exists
+//  if(!fs.existsSync(file.src)) return;
+//
+//  //1 Copy file to new folder
+//  logger.info(`[1.1] Starting to copy file ${file.dest}`);
+//  file = await copyFile(file).catch(err => console.log(err));
+//  if(!file) return;
+//  logger.info(`[1.2] copied file ${file.dest}`);
+//
+//  //2 Get files metadata
+//  logger.info(`[2.1] Starting to get metadata: ${file.dest}`);
+//  const metadata = await getMetadata(file)
+//    .catch(err => {
+//      logger.error(`Error getting metadata: ${file.dest}`)
+//    });
+//  file = {...file, metadata};
+//  logger.info(`[2.2] Got metadata: ${file.dest}`);
+//
+//  //4 Create files contactsheets
+//  file = await createContactsheet(file);
+//  
+//  //5 Uppload contactsheet to imagehoster website
+//  file = await upploadContactsheet(file);
+//
+//  //6 Save file to database
+//  saveFileToDatabase(file);
+//
+//}
 
-  //1
-  logger.info(`1) Starting to copy file ${file.dest}`);
-  file = await copyFile(file);
-  logger.info(`2) copied file ${file.dest}`);
 
-  //2
-  logger.info(`3) Starting to get metadata: ${file.dest}`);
-  const metadata = await getMetadata(file)
-    .catch(err => {
-      logger.error(`Error getting metadata: ${file.dest}`)
+function upploadContactsheet(file) {
+  const { contactsheetPath: src } = file;
+ 
+}
+
+
+
+async function createContactsheet(file) {
+  return new Promise((resolve, reject) => {
+    const { dest } = file;
+    const mtn = exec(
+      `${VENDOR_PATH}/mtn -b 2 -i -t -c 3 -r 12 -w 1024 -O ${CONTACT_SHEETS_PATH} ${dest}`,
+      function (error, stdout, stderr) {
+        if (error) {
+          console.log(error.stack);
+          return reject(error);
+        }
+        console.log('Child Process STDOUT: '+stdout);
+        console.log('Child Process STDERR: '+stderr);
+      }
+    );
+
+    mtn.on('exit', function (code) {
+      console.log('Child process exited with exit code '+code);
+
+      const contacsheetFileName = basenameWitoutExtention(path.basename(dest)) + '_s.jpg';
+      file.contactsheetPath = `${CONTACT_SHEETS_PATH}/${contacsheetFileName}`;
+      resolve(file);
     });
-  file = {...file, metadata};
-  logger.info(`4) Got metadata: ${file.dest}`);
-
-  //3
-  saveFileToDatabase(file);
+  });
 }
 
 
@@ -151,13 +211,17 @@ function resolvePath(files) {
 }
 
 
+function basenameWitoutExtention(filename) {
+  return filename.split('.').slice(0, -1).join('.')
+}
+
+
 async function rename(fileName, id) {
   const title = await getTorrentTitleByID(id);
   let newTitle= normalizeFilename(title);
 
-  let newFileName = fileName.split('.')
-    .slice(0, -1)
-    .join('.');
+  let newFileName = basenameWitoutExtention(fileName);
+
   newFileName = normalizeFilename(newFileName);
 
   const resultName = [].concat(
@@ -196,6 +260,9 @@ function getTorrentTitleByID(id) {
 
 function saveFileToDatabase(file) {
     const {id, dest, metadata} = file;
+
+    logger.info(`[3.1] Starting to save ${dest} to database`);
+
     const video = new Video({torrentId: id, path: dest, 
     metadata: new Metadata({...metadata})}); 
     const ERR_MSG = `Error saving file ${dest} to database`;
@@ -207,7 +274,7 @@ function saveFileToDatabase(file) {
         logger.error(err.stack);
         throw new Error(ERR_MSG);
       }
-      logger.info(`Saved ${result} to database`);
+      logger.info(`[3.2] Saved ${result} to database`);
     });
 }
 

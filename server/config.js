@@ -1,3 +1,4 @@
+
 module.exports = {
   DATABASE_URL: process.env.DATABASE_URL || "mongodb://localhost/parser",
 
@@ -19,6 +20,10 @@ module.exports = {
   VIDEOS_PATH: process.env.VIDEOS_PATH 
   //|| "/home/mint/hetz/home/alul/bposter/videos",
   || "/home/mint/projects/parser/videos",
+
+  CONTACT_SHEETS_PATH: '/home/mint/projects/parser/contactsheets',
+
+  VENDOR_PATH: '/home/mint/projects/parser/vendor',
 
   FILE_TYPES: [
     'jpg',

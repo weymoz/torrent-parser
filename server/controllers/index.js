@@ -6,3 +6,4 @@ module.exports.deleteAllDownloads = require('./deleteAllDownloads');
 module.exports.copy = require('./copy');
 module.exports.copiedFiles = require('./copiedFiles');
 module.exports.test = require('./test');
+module.exports.clearFolder = require('./clearFolder');

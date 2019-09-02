@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const parseTorrent = require("parse-torrent");
 const logger = require("../../logger")(module.filename);
+const Torrent = require('mongoose').model('torrent');
 
 module.exports = async function (req, res) {
 
