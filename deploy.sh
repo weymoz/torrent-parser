@@ -1,9 +1,10 @@
 tar czf parser.tar.gz \
   server \
   logger \
-  plug \
+  vendor\
   package.json \
   package-lock.json \
+  ecosystem.config.js \
   config.js \
 
 scp parser.tar.gz hetz:~
@@ -21,7 +22,11 @@ rm parser.tar.gz
 cd parser
 npm install
 
-pm2 start server
+mkdir \
+archives contactsheets downloads links screenshots torrents videos
+
+echo $MODE "mode"
+pm2 start ecosystem.config.js --env production
 ENDSSH
 
 

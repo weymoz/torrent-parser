@@ -14,8 +14,9 @@ db.on("error", () => {
     logger.info("connection OK")
 
   if (DROP_DATABASE) {
-    connection.dropDatabase((error, result) => {
+    db.dropDatabase((error, result) => {
       if(error) {
+        logger.debug(`Error dropping database`);
         logger.error(error);
         return;
       }

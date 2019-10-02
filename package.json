@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon server"
+    "server": "nodemon server",
+    "test": "nodemon -x mocha -w test -w server/utils-local"
   },
   "keywords": [],
   "author": "",
@@ -20,11 +21,13 @@
     "gulp-pug": "^4.0.1",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
+    "mocha": "^6.2.0",
     "node-sass": "^4.12.0",
-    "nodemon": "^1.19.1",
+    "nodemon": "^1.19.2",
     "winston": "^3.2.1"
   },
   "dependencies": {
+    "array-unique": "^0.3.2",
     "bencode": "^2.0.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
@@ -33,6 +36,7 @@
     "mongoose": "^5.5.11",
     "parse-torrent": "^6.1.2",
     "pug": "^2.0.4",
-    "ramda": "^0.26.1"
+    "ramda": "^0.26.1",
+    "request": "^2.88.0"
   }
 }

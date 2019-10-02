@@ -12,22 +12,73 @@ block content
         th.torrents-table__column-name.torrents-table__column-name_index #
         th.torrents-table__column-name Torrent id
         th.torrents-table__column-name File path
+        th.torrents-table__column-name Filehost links 
         th.torrents-table__column-name Metadata
+        th.torrents-table__column-name Contactsheets path
+        th.torrents-table__column-name Contactsheets URL
+        th.torrents-table__column-name Screenshots path
+        th.torrents-table__column-name Screenshots URL
     tbody
       each file, index in copiedFiles
         tr
           td.torrents-table__cell= index + 1
-            td.torrents-table__cell= file.torrentTitle 
+
+          td.torrents-table__cell= file.title 
+
           td.torrents-table__cell= file.path
+
+          td.torrents-table__cell.torrents-table__cell_hoverable
+            if file.filehostLinks
+              ul.files-list
+                each link in file.filehostLinks
+                  li.files-list__item
+                    a(href=link target='_blank')= link
+              .tooltip
+                ul.files-list
+                  each link in file.filehostLinks
+                    li.files-list__item
+                      a(href=link target='_blank')= link
+
           td.torrents-table__cell
-            b size: 
-            span= file.metadata.size
-            b  dur.: 
-            span= file.metadata.duration
-            b  res.: 
-            span= file.metadata.resolution
-            b  btrt.: 
-            span= file.metadata.bitrate
+            if file.metadata
+              b size: 
+              span= file.metadata.size
+              b  dur.: 
+              span= file.metadata.duration
+              b  res.: 
+              span= file.metadata.resolution
+              b  btrt.: 
+              span= file.metadata.bitrate
+          td.torrents-table__cell
+
+            if file.contactsheetPath
+              a(href=file.contactsheetLocalUrl
+                target='_blank')= file.contactsheetPath
+
+          td.torrents-table__cell
+            if file.contactsheetImgUrl
+              p
+                a(href=file.contactsheetImgUrl
+                  target='_blank')= file.contactsheetImgUrl
+            if file.contactsheetThumbUrl
+              p
+                a(href=file.contactsheetThumbUrl
+                  target='_blank')= file.contactsheetThumbUrl
+
+          td.torrents-table__cell
+            if file.screenshotPath
+              a(href=file.screenshotLocalUrl
+                target='_blank')= file.screenshotPath
+
+          td.torrents-table__cell
+            if file.screenshotImgUrl
+              p
+                a(href=file.screenshotImgUrl
+                  target='_blank')= file.screenshotImgUrl
+            if file.screenshotThumbUrl
+              p
+                a(href=file.screenshotThumbUrl
+                  target='_blank')= file.screenshotThumbUrl
 
 
 
