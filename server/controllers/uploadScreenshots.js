@@ -27,9 +27,15 @@ const options = {
 module.exports = async (req, res, next) =>  {
 
   logger.info('\n============== UPLOAD SCREENSHOTS START  =============\n');
-  let videos = await Video.find({screenshotPath: {$ne: null}}).select('screenshotPath');
+  let videos = await Video
+    .find({screenshotsPath: {$ne: null}})
+    .select('screenshotsPath');
+
   videos = await uploadImages(videos);
+
   const results = await saveImagesToDatabase(videos);
+  logger.info(results)
+
   logger.info('\n============== UPLOAD SCREENSHOTS END =============\n');
 
   if(SINGLE_OP_MODE) {
@@ -41,12 +47,27 @@ module.exports = async (req, res, next) =>  {
 }
 
 function uploadImages(videos) {
-  return Promise.all(videos.map(uploadImage));
+  return Promise.all(videos.map(uploadVideoScreenshots));
 }
 
-function uploadImage(video) {
-  return new Promise((resolve) => {
-    options.formData.img =  fs.createReadStream(video.screenshotPath);
+
+function uploadVideoScreenshots(video) {
+  const {screenshotsPath: paths, _id: id} = video;
+  return new Promise(async resolve => {
+    const results = await Promise.all(paths.map(path => uploadImage(path)));
+
+    const screenshotsUrl = results.map(result => ( {
+      screenshotThumbUrl: result.th_url, 
+      screenshotImgUrl: result.show_url
+    } )); 
+    resolve( {id, screenshotsUrl} );
+  })
+}
+
+
+function uploadImage(screenshotPath) {
+  return new Promise(resolve => {
+    options.formData.img =  fs.createReadStream(screenshotPath);
     request(options, (err, resp, body) => {
       if(err) {
         logger.error('Failed to uppload screenshot');
@@ -54,22 +75,22 @@ function uploadImage(video) {
         resolve({})
       }
       const jsonBody = JSON.parse(body);
-      jsonBody.videoId = video._id;
       logger.info(`Uploaded successfully ${util.inspect(jsonBody)}`);
       resolve(jsonBody);
     });
   })
 }
 
-function saveImagesToDatabase(images) {
-  return Promise.all(images.map(saveImageToDatabase));
+
+function saveImagesToDatabase(videos) {
+  return Promise.all(videos.map(saveImageToDatabase));
 }
 
-function saveImageToDatabase(image) {
+
+function saveImageToDatabase(video) {
   return new Promise(resolve => {
-    Video.findByIdAndUpdate(image.videoId, {
-      screenshotImgUrl: image.show_url,
-      screenshotThumbUrl: image.th_url
+    Video.findByIdAndUpdate(video.id, {
+      screenshotsUrl: video.screenshotsUrl
     }, {new: true}, (err, result) => {
       if(err) {
         logger.error(err);

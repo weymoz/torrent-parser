@@ -18,9 +18,8 @@ const videoSchema = new mongoose.Schema({
   contactsheetPath: String,
   contactsheetImgUrl: String,
   contactsheetThumbUrl: String,
-  screenshotPath: String,
-  screenshotImgUrl: String,
-  screenshotThumbUrl: String,
+  screenshotsPath: [ String ],
+  screenshotsUrl: [ Object ],
   filehostLinks: [String]
 });
 

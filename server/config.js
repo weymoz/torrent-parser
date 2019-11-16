@@ -4,18 +4,21 @@ const devConfig =
 {
   CONFIG_MODE: 'development',
 
+  THREADS_LIMIT: 2,
+
   CLEAN_ALL_FOLDERS: false, //!!!
 
     CLEAN_SCREENSHOTS: true,
     CLEAN_CONTACTSHEETS: true,
-    CLEAN_VIDEOS: true,
+    CLEAN_VIDEOS: false,
     CLEAN_DOWNLOADS: false,
     CLEAN_TORRENTS: false,
 
-    SINGLE_OP_MODE: process.env.SINGLE_OP_MODE !== 'false' && false,
+    SINGLE_OP_MODE: process.env.SINGLE_OP_MODE !== 'false' && true,
 
-  //DATABASE_URL: process.env.DATABASE_URL || "mongodb://localhost/parser",
-   DATABASE_URL: process.env.DATABASE_URL || "mongodb://dev:qxwv_35AZSC@176.9.155.242:27017/parser",
+  DATABASE_URL: process.env.DATABASE_URL || "mongodb://localhost/parser",
+  //    DATABASE_URL: process.env.DATABASE_URL || 
+  //    "mongodb://dev:qxwv_35AZSC@176.9.155.242:27017/parser",
 
     DROP_DATABASE: process.env.DROP_DATABASE !== "false" && false,
 
@@ -54,6 +57,7 @@ const devConfig =
     ARCHIVE_VOLUME_SIZE: 100000000, //bytes
 
     FILE_TYPES: [
+      'JPG',
       'jpg',
       'jpeg',
       'gif',

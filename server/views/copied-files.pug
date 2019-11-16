@@ -66,19 +66,15 @@ block content
                   target='_blank')= file.contactsheetThumbUrl
 
           td.torrents-table__cell
-            if file.screenshotPath
-              a(href=file.screenshotLocalUrl
-                target='_blank')= file.screenshotPath
+            if file.screenshotsLocalUrls
+              each screenshotLocalUrl in file.screenshotsLocalUrls
+                p
+                  a(href=screenshotLocalUrl target='_blank')= screenshotLocalUrl
 
           td.torrents-table__cell
-            if file.screenshotImgUrl
-              p
-                a(href=file.screenshotImgUrl
-                  target='_blank')= file.screenshotImgUrl
-            if file.screenshotThumbUrl
-              p
-                a(href=file.screenshotThumbUrl
-                  target='_blank')= file.screenshotThumbUrl
-
-
-
+            if file.screenshotsUrl
+              each item in file.screenshotsUrl
+                p
+                  a(href=item.screenshotThumbUrl target='_blank')= item.screenshotThumbUrl
+                p
+                  a(href=item.screenshotImgUrl target='_blank')= item.screenshotImgUrl

@@ -1,18 +1,20 @@
+//imports
 const logger = require('../../logger')(module.filename);
 const mongoose = require('mongoose');
 const { exec } = require('child_process');
 const fs = require('fs');
+const path = require('path');
+const util = require('util');
+const { compose } = require('ramda');
 const { 
   basenameWitoutExtention, 
   getAllFiles,
   filterFileListByPath,
-  copyFiles
 } = require('../utils-local');
 
-const Torrent = mongoose.model('torrent');
-const Metadata = mongoose.model('metadata');
-const Video = mongoose.model('video');
+const taskRunner = require('../utils-local/task-runner');
 
+//Import config
 const { 
   TORRENTS_PATH,
   VIDEOS_PATH, 
@@ -24,12 +26,18 @@ const {
   CONTACT_SHEETS_PATH,
   VENDOR_PATH,
   SINGLE_OP_MODE,
+  THREADS_LIMIT
 } = require('../config');
 
-const path = require('path');
-const util = require('util');
-const { compose } = require('ramda');
-var unique = require('array-unique');
+const Torrent = mongoose.model('torrent');
+const Metadata = mongoose.model('metadata');
+const Video = mongoose.model('video');
+
+const copy = util.promisify(fs.copyFile);
+
+let copiedCount = 0;
+let filesCount = 0;
+
 
 module.exports = async (req, res, next) => {
 
@@ -69,7 +77,7 @@ module.exports = async (req, res, next) => {
   logger.info(`${files.length} documents remains after filtering files with zero size`);
   logger.info(`------------------------------------------------------\n`);
 
-
+  totalCount = files.length;
   files = await copyFiles(files);
 
   files = await filterFileListByPath(files, 'dest');
@@ -91,6 +99,26 @@ module.exports = async (req, res, next) => {
     next();
   }
 }
+
+function copyFileObject( file ) {
+    return copy(file.src, file.dest)
+        .then(() => {
+            copiedCount++;
+            logger.info(`[${copiedCount}/${totalCount}] Finished copying \n${file.src}\n`);
+            return {...file};
+        })
+        .catch(err => {
+            copiedCount++;
+            logger.error(`Error copying \n${file.src}\n`);
+            return err;
+        });
+}
+
+function copyFiles ( files ) {
+  return taskRunner(copyFileObject, files, THREADS_LIMIT);
+} 
+    
+
 
 
 function setSrcAbsPath(files) {
