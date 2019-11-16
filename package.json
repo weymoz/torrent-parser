@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "server": "nodemon server",
-    "test": "nodemon -x mocha -w test -w server/utils-local"
+    "test": "nodemon -x 'mocha --timeout 3600s' -w test -w server/utils-local"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +30,7 @@
     "array-unique": "^0.3.2",
     "bencode": "^2.0.1",
     "body-parser": "^1.19.0",
+    "cli-progress": "^3.3.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "fluent-ffmpeg": "^2.1.2",

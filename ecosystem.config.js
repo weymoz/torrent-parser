@@ -1,16 +1,15 @@
 module.exports = {
   apps : [
     {
-      name: "parser-server",
+      name: "pars",
       script: "./server/index.js",
       env: {
         MODE: "development",
-
       },
       env_production: {
         MODE: "production",
       },
-      watch: ['server']
+      watch: ['./server']
     }]
 };
 
