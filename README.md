@@ -1,4 +1,4 @@
-#[WIP] Torrent parser, site creator
+# [WIP] Torrent parser, site creator
 Parse cpecific torrent tracker site with Chrome plugin,
 then download files, and prepare content.
 
